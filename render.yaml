@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: university-management-system-api
+    runtime: docker
+    rootDir: university
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION_MINUTES
+        value: "480"
+      - key: FRONTEND_URL
+        value: https://university-management-system-topaz.vercel.app

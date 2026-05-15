@@ -1,0 +1,50 @@
+.module-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 18px;
+  align-items: start;
+}
+
+.module-stack {
+  display: grid;
+  gap: 22px;
+}
+
+.module-table-panel {
+  min-width: 0;
+}
+
+.module-form-panel {
+  position: sticky;
+  top: 0;
+}
+
+.module-form {
+  display: grid;
+  gap: 16px;
+}
+
+.module-table {
+  max-height: 62vh;
+}
+
+.module-table table {
+  min-width: 840px;
+}
+
+@media (max-width: 1080px) {
+  .module-page {
+    grid-template-columns: 1fr;
+  }
+
+  .module-form-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .module-table {
+    max-width: calc(100vw - 36px);
+    max-height: none;
+  }
+}

@@ -1,0 +1,37 @@
+.record-form {
+  display: grid;
+  gap: 16px;
+}
+
+.record-form h2 {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+
+.form-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.form-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ghost-action {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-weight: 800;
+  transition: transform 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.ghost-action:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+  transform: translateY(-1px);
+}
