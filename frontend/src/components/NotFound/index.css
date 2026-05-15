@@ -1,0 +1,25 @@
+.not-found-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.not-found-panel {
+  width: min(100%, 520px);
+}
+
+.not-found-panel h1 {
+  font-size: 2rem;
+}
+
+.not-found-link {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  text-decoration: none;
+}

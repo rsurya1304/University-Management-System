@@ -1,0 +1,65 @@
+.access-page {
+  display: grid;
+  gap: 20px;
+}
+
+.staff-registration {
+  display: grid;
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-soft);
+}
+
+.staff-registration .panel-heading svg {
+  width: 32px;
+  height: 32px;
+  color: var(--accent);
+}
+
+.staff-registration-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.staff-registration-form .field-group,
+.staff-registration-form .primary-action {
+  grid-column: 1 / -1;
+}
+
+.staff-role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.staff-role-grid button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.staff-role-grid button.active,
+.staff-role-grid button:hover {
+  border-color: rgba(29, 95, 209, 0.38);
+  background: var(--surface);
+  color: var(--accent-strong);
+}
+
+@media (max-width: 700px) {
+  .staff-registration-form,
+  .staff-role-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,5 @@
+@import '../StudentTable/index.css';
+
+.course-table table {
+  min-width: 860px;
+}

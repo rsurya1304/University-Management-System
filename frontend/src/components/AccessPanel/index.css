@@ -1,0 +1,58 @@
+.access-layout {
+  display: grid;
+  gap: 20px;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.role-tile {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.role-tile.current {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(29, 95, 209, 0.12);
+}
+
+.role-tile span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.role-tile strong {
+  color: var(--accent-strong);
+}
+
+.role-tile p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (min-width: 1081px) {
+  .role-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+}

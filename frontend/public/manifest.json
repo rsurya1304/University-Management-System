@@ -1,0 +1,15 @@
+{
+  "short_name": "University",
+  "name": "University Management System",
+  "icons": [
+    {
+      "src": "university-logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "160x160"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1d5fd1",
+  "background_color": "#eef1f4"
+}

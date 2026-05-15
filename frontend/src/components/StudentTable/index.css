@@ -1,0 +1,91 @@
+.data-table {
+  width: 100%;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  scrollbar-width: thin;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.data-table th,
+.data-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 13px 12px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  color: var(--ink);
+  font-weight: 650;
+}
+
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table tr {
+  transition: background 160ms ease;
+}
+
+.data-table tbody tr:hover {
+  background: var(--surface-soft);
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.row-action {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  transition: transform 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.row-action:hover {
+  transform: translateY(-1px);
+}
+
+.row-action.edit:hover {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.row-action.delete:hover {
+  border-color: rgba(180, 35, 24, 0.38);
+  color: var(--danger);
+}
+
+@media (max-width: 700px) {
+  .data-table {
+    max-width: calc(100vw - 36px);
+  }
+
+  .data-table table {
+    min-width: 720px;
+  }
+}

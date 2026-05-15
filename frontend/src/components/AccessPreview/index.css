@@ -1,0 +1,67 @@
+.access-preview {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: 56px;
+  background:
+    linear-gradient(var(--hero-overlay), var(--hero-overlay)),
+    url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+}
+
+.access-preview .eyebrow {
+  color: #9cc2ff;
+}
+
+.access-preview h2 {
+  max-width: 680px;
+  margin-bottom: 0;
+  font-size: 2.6rem;
+  line-height: 1.05;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  max-width: 760px;
+}
+
+.preview-item {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.preview-item span {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.45;
+}
+
+@media (max-width: 1080px) {
+  .access-preview {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .access-preview {
+    padding: 22px;
+  }
+
+  .access-preview h2 {
+    font-size: 1.8rem;
+  }
+
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+}

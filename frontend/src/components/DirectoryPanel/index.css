@@ -1,0 +1,38 @@
+.directory-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 18px;
+  align-items: start;
+}
+
+.data-panel {
+  min-width: 0;
+}
+
+.panel-detail {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.form-panel {
+  position: sticky;
+  top: 28px;
+}
+
+@media (min-width: 1081px) {
+  .directory-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  }
+}
+
+@media (max-width: 1080px) {
+  .directory-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel {
+    position: static;
+  }
+}
