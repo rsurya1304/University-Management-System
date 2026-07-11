@@ -5,7 +5,7 @@ import './index.css';
 class FeesPage extends Component {
   canManageFees() {
     const { accessLevel } = this.props.session;
-    return accessLevel === 'ADMIN' || accessLevel === 'REGISTRAR';
+    return accessLevel === 'ADMIN';
   }
 
   render() {

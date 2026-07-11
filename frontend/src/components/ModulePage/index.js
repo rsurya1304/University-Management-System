@@ -179,12 +179,20 @@ class ModulePage extends Component {
                   required={field.required}
                 >
                   <option value="">Select</option>
-                  {(options[field.name] || []).map((option) => (
+                  {(field.options || options[field.name] || []).map((option) => (
                     <option key={field.optionValue(option)} value={field.optionValue(option)}>
                       {field.optionLabel(option)}
                     </option>
                   ))}
                 </select>
+              ) : field.type === 'textarea' ? (
+                <textarea
+                  value={form[field.name]}
+                  onChange={(event) => this.updateField(field.name, event.target.value)}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  rows={4}
+                />
               ) : (
                 <input
                   type={field.type || 'text'}

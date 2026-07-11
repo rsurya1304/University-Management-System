@@ -1,27 +1,48 @@
 .auth-page {
   min-height: 100vh;
-  display: grid;
-  grid-template-columns: minmax(320px, 520px) minmax(320px, 1fr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 18px;
   background: var(--bg);
   color: var(--ink);
 }
 
 .auth-panel {
-  min-height: 100vh;
+  width: min(100%, 560px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 22px;
   padding: 48px;
   background: var(--surface);
-  border-right: 1px solid var(--line);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
 }
 
 .auth-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: 18px;
+}
+
+.auth-header-actions,
+.auth-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-home-link {
+  min-height: 42px;
+  padding: 10px 13px;
+  text-decoration: none;
+}
+
+.auth-header-actions {
+  flex-wrap: nowrap;
 }
 
 .auth-panel h1 {
@@ -67,6 +88,45 @@
 .auth-form {
   display: grid;
   gap: 16px;
+}
+
+.register-category {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--surface-soft);
+}
+
+.register-category > svg {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+}
+
+.register-category div {
+  display: grid;
+  gap: 3px;
+}
+
+.register-category span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.register-category strong {
+  color: var(--ink);
+}
+
+.register-category em {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-style: normal;
+  line-height: 1.45;
 }
 
 .password-input-shell {
@@ -165,22 +225,36 @@
 }
 
 @media (max-width: 1080px) {
-  .auth-page {
-    grid-template-columns: 1fr;
-  }
-
   .auth-panel {
     min-height: auto;
   }
 }
 
 @media (max-width: 700px) {
+  .auth-page {
+    align-items: stretch;
+    padding: 0;
+  }
+
   .auth-panel {
+    width: 100%;
+    min-height: 100vh;
+    border-radius: 0;
+    border: 0;
     padding: 22px;
   }
 
   .auth-header {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .auth-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .auth-home-link {
+    flex: 1 1 auto;
   }
 
   .auth-panel h1 {

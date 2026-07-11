@@ -55,7 +55,8 @@ html {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -80,7 +81,8 @@ label,
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 44px;
   border: 1px solid var(--line);
@@ -93,9 +95,15 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(29, 95, 209, 0.13);
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .brand-lockup {
@@ -110,13 +118,15 @@ select:focus {
 }
 
 .brand-lockup.compact div:last-child {
-  display: grid;
-  gap: 2px;
+  min-width: 0;
 }
 
-.brand-lockup.compact span {
-  color: rgba(255, 255, 255, 0.68);
-  font-size: 0.86rem;
+.brand-lockup.compact strong {
+  display: block;
+  color: var(--sidebar-ink);
+  font-size: 1rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .brand-mark {
@@ -335,10 +345,6 @@ html[data-theme='dark'] .role-badge {
   line-height: 1.6;
 }
 
-.brand-lockup.compact strong,
-.brand-lockup.compact span {
-  white-space: nowrap;
-}
 
 @media (max-width: 700px) {
   .panel-heading {

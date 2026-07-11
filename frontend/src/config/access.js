@@ -13,6 +13,7 @@ export const ACCESS_PROFILES = {
       'marks',
       'timetable',
       'reports',
+      'announcements',
       'access',
     ],
     permissions: [
@@ -23,24 +24,11 @@ export const ACCESS_PROFILES = {
       'Full visibility across university-wide data',
     ],
   },
-  REGISTRAR: {
-    label: 'Registrar',
-    summary:
-      'Academic operations role: manage student lifecycle, curriculum structure, fees, and reporting.',
-    views: ['overview', 'students', 'courses', 'academic', 'fees', 'reports', 'access'],
-    permissions: [
-      'Create, edit, and delete students and courses',
-      'Manage departments, semesters, classes, and syllabi',
-      'Manage fee records and payment status',
-      'View operational reports',
-      'No professor account administration',
-    ],
-  },
   PROFESSOR: {
     label: 'Professor',
     summary:
       'Teaching role: review students, manage marks, and work with timetable and assigned courses.',
-    views: ['overview', 'courses', 'students', 'marks', 'timetable', 'reports', 'access'],
+    views: ['overview', 'courses', 'students', 'marks', 'timetable', 'reports', 'announcements', 'access'],
     permissions: [
       'View students and course catalog',
       'Create and update marks/results',
@@ -53,7 +41,7 @@ export const ACCESS_PROFILES = {
     label: 'Student',
     summary:
       'Learner self-service role: access own academic and fee information with course and timetable view.',
-    views: ['overview', 'courses', 'fees', 'marks', 'timetable', 'access'],
+    views: ['overview', 'courses', 'fees', 'marks', 'timetable', 'announcements', 'access'],
     permissions: [
       'Register and sign in to personal account',
       'View own fee records and payment status',
@@ -74,6 +62,7 @@ export const NAV_ITEMS = [
   { id: 'marks', label: 'Marks', path: '/marks' },
   { id: 'timetable', label: 'Timetable', path: '/timetable' },
   { id: 'reports', label: 'Reports', path: '/reports' },
+  { id: 'announcements', label: 'Announcements', path: '/announcements' },
   { id: 'access', label: 'Access', path: '/access' },
 ];
 

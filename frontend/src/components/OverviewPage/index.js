@@ -14,6 +14,9 @@ class OverviewPage extends Component {
       courses: 0,
     },
     courses: [],
+    fees: [],
+    marks: [],
+    studentProfile: null,
   };
 
   componentDidMount() {
@@ -24,6 +27,28 @@ class OverviewPage extends Component {
     this.setState({ loading: true, apiError: '' });
 
     try {
+      if (this.props.session.accessLevel === 'STUDENT') {
+        const [studentProfile, courses, fees, marks] = await Promise.all([
+          apiRequest('/me/student'),
+          apiRequest('/me/courses'),
+          apiRequest('/me/fees'),
+          apiRequest('/me/marks'),
+        ]);
+
+        this.setState({
+          counts: {
+            students: 1,
+            professors: 0,
+            courses: Array.isArray(courses) ? courses.length : 0,
+          },
+          courses: Array.isArray(courses) ? courses : [],
+          fees: Array.isArray(fees) ? fees : [],
+          marks: Array.isArray(marks) ? marks : [],
+          studentProfile,
+        });
+        return;
+      }
+
       const requests = [
         { key: 'students', path: '/students' },
         { key: 'professors', path: '/professors' },
@@ -71,7 +96,7 @@ class OverviewPage extends Component {
 
   render() {
     const profile = getProfile(this.props.session.accessLevel);
-    const { apiError, counts, courses, loading } = this.state;
+    const { apiError, counts, courses, fees, loading, marks, studentProfile } = this.state;
 
     if (loading) {
       return <div className="empty-state">Loading campus overview...</div>;
@@ -83,8 +108,11 @@ class OverviewPage extends Component {
         <Overview
           counts={counts}
           courses={courses}
+          fees={fees}
+          marks={marks}
           profile={profile}
           session={this.props.session}
+          studentProfile={studentProfile}
         />
       </div>
     );

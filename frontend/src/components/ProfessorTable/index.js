@@ -46,6 +46,7 @@ class ProfessorTable extends Component {
             <tr>
               <th>ID</th>
               <th>Name</th>
+              <th>Email</th>
               <th>Department</th>
               <th>Courses</th>
               {canManage && <th>Actions</th>}
@@ -56,6 +57,7 @@ class ProfessorTable extends Component {
               <tr key={professor.professorId}>
                 <td>{professor.professorId}</td>
                 <td>{professor.professorName}</td>
+                <td>{professor.email}</td>
                 <td>{professor.department}</td>
                 <td>{professor.courses?.length || 0}</td>
                 {this.renderActions(professor)}

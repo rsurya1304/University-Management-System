@@ -21,6 +21,9 @@ public class Professor {
     @Column(name = "department", nullable = false)
     private String department;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     @OneToMany(mappedBy = "professor", fetch = FetchType.EAGER)
     @JsonIgnoreProperties({
             "professor",
@@ -56,6 +59,14 @@ public class Professor {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<Course> getCourses() {

@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   FiBookOpen,
+  FiBell,
   FiCalendar,
   FiClipboard,
   FiDollarSign,
   FiGrid,
+  FiLogOut,
   FiMenu,
   FiPieChart,
   FiShield,
@@ -29,6 +31,7 @@ const NAV_ICONS = {
   marks: FiPieChart,
   timetable: FiCalendar,
   reports: FiPieChart,
+  announcements: FiBell,
   access: FiShield,
 };
 
@@ -98,8 +101,7 @@ class DashboardLayout extends Component {
           <div className="brand-lockup compact sidebar-brand">
             <img className="brand-logo" src={UniversityLogo} alt="University logo" />
             <div>
-              <strong>University</strong>
-              <span>Management System</span>
+              <strong>University Management System</strong>
             </div>
             <button
               className="icon-button sidebar-close"
@@ -139,6 +141,14 @@ class DashboardLayout extends Component {
             </div>
             <div className="topbar-actions">
               <ThemeToggle />
+              <button
+                className="secondary-action topbar-signout"
+                type="button"
+                onClick={this.props.onSignOut}
+              >
+                <FiLogOut />
+                <span>Sign out</span>
+              </button>
             </div>
           </header>
 

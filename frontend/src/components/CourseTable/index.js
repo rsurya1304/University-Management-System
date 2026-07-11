@@ -1,10 +1,34 @@
 import React, { Component } from 'react';
-import { FiEdit3, FiTrash2 } from 'react-icons/fi';
+import { FiCheckCircle, FiEdit3, FiPlusCircle, FiTrash2, FiXCircle } from 'react-icons/fi';
 import './index.css';
 
 class CourseTable extends Component {
   renderActions(course) {
-    const { canManage, onDelete, onEdit } = this.props;
+    const {
+      canManage,
+      canRegister,
+      isRegistered,
+      onDelete,
+      onEdit,
+      onRegister,
+      onWithdraw,
+    } = this.props;
+
+    if (canRegister) {
+      const registered = isRegistered(course);
+      return (
+        <td>
+          <button
+            className={`course-register-action ${registered ? 'registered' : ''}`}
+            type="button"
+            onClick={() => (registered ? onWithdraw(course) : onRegister(course))}
+          >
+            {registered ? <FiXCircle /> : <FiPlusCircle />}
+            <span>{registered ? 'Withdraw' : 'Register'}</span>
+          </button>
+        </td>
+      );
+    }
 
     if (!canManage) {
       return null;
@@ -37,7 +61,7 @@ class CourseTable extends Component {
   }
 
   render() {
-    const { canManage, courses } = this.props;
+    const { canManage, canRegister, courses, isRegistered } = this.props;
 
     return (
       <div className="course-table data-table">
@@ -48,8 +72,9 @@ class CourseTable extends Component {
               <th>Course</th>
               <th>Credits</th>
               <th>Professor</th>
-              <th>Students</th>
-              {canManage && <th>Actions</th>}
+              {canManage && <th>Students</th>}
+              {canRegister && <th>Status</th>}
+              {(canManage || canRegister) && <th>Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -59,7 +84,21 @@ class CourseTable extends Component {
                 <td>{course.courseName}</td>
                 <td>{course.credits}</td>
                 <td>{course.professor?.professorName || 'Unassigned'}</td>
-                <td>{course.students?.length || 0}</td>
+                {canManage && <td>{course.students?.length || 0}</td>}
+                {canRegister && (
+                  <td>
+                    <span className={`course-status ${isRegistered(course) ? 'active' : ''}`}>
+                      {isRegistered(course) ? (
+                        <>
+                          <FiCheckCircle />
+                          Registered
+                        </>
+                      ) : (
+                        'Available'
+                      )}
+                    </span>
+                  </td>
+                )}
                 {this.renderActions(course)}
               </tr>
             ))}

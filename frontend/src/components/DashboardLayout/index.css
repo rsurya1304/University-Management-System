@@ -109,6 +109,13 @@
   justify-content: flex-end;
 }
 
+.topbar-signout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
 .topbar h1 {
   margin-bottom: 6px;
   font-size: 2rem;

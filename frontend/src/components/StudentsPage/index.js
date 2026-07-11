@@ -26,7 +26,7 @@ class StudentsPage extends Component {
 
   canManageStudents() {
     const { accessLevel } = this.props.session;
-    return accessLevel === 'ADMIN' || accessLevel === 'REGISTRAR';
+    return accessLevel === 'ADMIN';
   }
 
   loadStudents = async () => {

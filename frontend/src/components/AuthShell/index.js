@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   FiBookOpen,
+  FiHome,
   FiEye,
   FiEyeOff,
   FiKey,
@@ -9,10 +11,9 @@ import {
   FiUserCheck,
   FiUserPlus,
 } from 'react-icons/fi';
-import { ACCESS_PROFILES, DEMO_ACCOUNTS } from '../../config/access';
-import { apiRequest } from '../../services/api';
+import { DEMO_ACCOUNTS } from '../../config/access';
+import { apiRequest, warmUpApi } from '../../services/api';
 import UniversityLogo from '../../assets/university-logo.svg';
-import AccessPreview from '../AccessPreview';
 import ThemeToggle from '../ThemeToggle';
 import './index.css';
 
@@ -31,6 +32,7 @@ class AuthShell extends Component {
       loading: false,
       notice: '',
       noticeType: 'error',
+      serverStatus: 'checking',
       loginForm: {
         email: '',
         password: '',
@@ -50,6 +52,12 @@ class AuthShell extends Component {
     if (prevProps.initialMode !== this.props.initialMode && this.props.initialMode) {
       this.setState({ mode: this.props.initialMode, notice: '' });
     }
+  }
+
+  componentDidMount() {
+    warmUpApi().then((ready) => {
+      this.setState({ serverStatus: ready ? 'ready' : 'waking' });
+    });
   }
 
   setMode = (mode) => {
@@ -93,6 +101,7 @@ class AuthShell extends Component {
       const user = await apiRequest('/auth/login', {
         method: 'POST',
         body: this.state.loginForm,
+        retries: 1,
       });
       this.props.onAuthenticated(user);
     } catch (error) {
@@ -166,7 +175,7 @@ class AuthShell extends Component {
           </div>
         </label>
         <button className="primary-action" type="submit" disabled={loading}>
-          {loading ? 'Checking access' : 'Login to console'}
+          {loading ? 'Checking access' : 'Login to portal'}
         </button>
       </form>
     );
@@ -228,21 +237,12 @@ class AuthShell extends Component {
             </button>
           </div>
         </label>
-        <div className="field-group">
-          <span>Access level</span>
-          <div className="segmented-control">
-            {Object.keys(ACCESS_PROFILES)
-              .filter((level) => level === 'STUDENT')
-              .map((level) => (
-              <button
-                className={registerForm.accessLevel === level ? 'active' : ''}
-                key={level}
-                type="button"
-                onClick={() => this.updateRegisterForm('accessLevel', level)}
-              >
-                {ACCESS_PROFILES[level].label}
-              </button>
-              ))}
+        <div className="register-category">
+          <FiBookOpen aria-hidden="true" />
+          <div>
+            <span>Account category</span>
+            <strong>Student</strong>
+            <em>Public registration creates a student login. Admins create professor and admin accounts from inside the portal.</em>
           </div>
         </div>
         <button className="primary-action" type="submit" disabled={loading}>
@@ -253,7 +253,7 @@ class AuthShell extends Component {
   }
 
   render() {
-    const { mode, notice, noticeType } = this.state;
+    const { mode, notice, noticeType, serverStatus } = this.state;
 
     return (
       <main className="auth-page">
@@ -263,10 +263,16 @@ class AuthShell extends Component {
               <img className="brand-logo" src={UniversityLogo} alt="University logo" />
               <div>
                 <p className="eyebrow">University Management System</p>
-                <h1 id="auth-title">Campus operations console</h1>
+                <h1 id="auth-title">University Management Portal</h1>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="auth-header-actions">
+              <Link className="secondary-action auth-home-link" to="/">
+                <FiHome />
+                <span>Home</span>
+              </Link>
+              <ThemeToggle />
+            </div>
           </div>
 
           <div className="auth-tabs" role="tablist" aria-label="Authentication mode">
@@ -289,6 +295,11 @@ class AuthShell extends Component {
           </div>
 
           {notice && <div className={`status-message ${noticeType}`}>{notice}</div>}
+          {serverStatus === 'waking' && (
+            <div className="status-message">
+              Backend may be waking up. First login can take a few seconds on free hosting.
+            </div>
+          )}
 
           {mode === 'login' ? this.renderLoginForm() : this.renderRegisterForm()}
 
@@ -316,8 +327,6 @@ class AuthShell extends Component {
             </div>
           </div>
         </section>
-
-        <AccessPreview />
       </main>
     );
   }

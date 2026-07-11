@@ -5,7 +5,7 @@ import './index.css';
 class AcademicPage extends Component {
   canManageAcademic() {
     const { accessLevel } = this.props.session;
-    return accessLevel === 'ADMIN' || accessLevel === 'REGISTRAR';
+    return accessLevel === 'ADMIN';
   }
 
   render() {

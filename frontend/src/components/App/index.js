@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import AcademicPage from '../AcademicPage';
 import AccessPage from '../AccessPage';
+import AnnouncementsPage from '../AnnouncementsPage';
 import AuthShell from '../AuthShell';
 import CoursesPage from '../CoursesPage';
 import FeesPage from '../FeesPage';
+import HomePage from '../HomePage';
 import MarksPage from '../MarksPage';
 import NotFound from '../NotFound';
 import OverviewPage from '../OverviewPage';
@@ -70,7 +72,11 @@ class App extends Component {
 
   renderRootRoute() {
     const { session } = this.state;
-    return <Redirect to={session ? getDefaultPath(session.accessLevel) : '/login'} />;
+    if (session) {
+      return <Redirect to={getDefaultPath(session.accessLevel)} />;
+    }
+
+    return <HomePage />;
   }
 
   renderProtectedRoute(path, viewId, PageComponent) {
@@ -103,6 +109,7 @@ class App extends Component {
             {this.renderProtectedRoute('/marks', 'marks', MarksPage)}
             {this.renderProtectedRoute('/timetable', 'timetable', TimetablePage)}
             {this.renderProtectedRoute('/reports', 'reports', ReportsPage)}
+            {this.renderProtectedRoute('/announcements', 'announcements', AnnouncementsPage)}
             {this.renderProtectedRoute('/access', 'access', AccessPage)}
             <Route component={NotFound} />
           </Switch>

@@ -22,6 +22,16 @@ class ProfessorForm extends Component {
           />
         </label>
         <label>
+          Email
+          <input
+            type="email"
+            value={form.email}
+            onChange={(event) => onChange('email', event.target.value)}
+            placeholder="professor@university.edu"
+            required
+          />
+        </label>
+        <label>
           Department
           <input
             value={form.department}

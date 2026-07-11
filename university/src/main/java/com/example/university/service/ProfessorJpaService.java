@@ -72,6 +72,31 @@ public class ProfessorJpaService implements ProfessorRepository {
                 );
             }
 
+            if (professor.getDepartment() == null ||
+                    professor.getDepartment().trim().isEmpty()) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Department is required"
+                );
+            }
+
+            if (professor.getEmail() == null ||
+                    professor.getEmail().trim().isEmpty()) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Professor email is required"
+                );
+            }
+
+            if (professorJpaRepository.existsByEmailIgnoreCase(professor.getEmail())) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Professor email already exists"
+                );
+            }
+
             return professorJpaRepository.save(professor);
 
         } catch (ResponseStatusException e) {
@@ -108,6 +133,18 @@ public class ProfessorJpaService implements ProfessorRepository {
 
                 existingProfessor
                         .setDepartment(professor.getDepartment());
+            }
+
+            if (professor.getEmail() != null) {
+                professorJpaRepository.findByEmailIgnoreCase(professor.getEmail())
+                        .filter(foundProfessor -> foundProfessor.getProfessorId() != professorId)
+                        .ifPresent(foundProfessor -> {
+                            throw new ResponseStatusException(
+                                    HttpStatus.CONFLICT,
+                                    "Professor email already exists"
+                            );
+                        });
+                existingProfessor.setEmail(professor.getEmail());
             }
 
             return professorJpaRepository.save(existingProfessor);

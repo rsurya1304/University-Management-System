@@ -16,6 +16,7 @@ class ProfessorsPage extends Component {
     editingProfessorId: null,
     professorForm: {
       professorName: '',
+      email: '',
       department: '',
     },
   };
@@ -54,6 +55,7 @@ class ProfessorsPage extends Component {
       notice: '',
       professorForm: {
         professorName: professor.professorName || '',
+        email: professor.email || '',
         department: professor.department || '',
       },
     });
@@ -63,7 +65,7 @@ class ProfessorsPage extends Component {
     this.setState({
       editingProfessorId: null,
       notice: '',
-      professorForm: { professorName: '', department: '' },
+      professorForm: { professorName: '', email: '', department: '' },
     });
   };
 
@@ -83,7 +85,7 @@ class ProfessorsPage extends Component {
       );
       this.setState({
         editingProfessorId: null,
-        professorForm: { professorName: '', department: '' },
+        professorForm: { professorName: '', email: '', department: '' },
         notice: editingProfessorId ? 'Professor record updated.' : 'Professor record created.',
       });
       this.loadProfessors();
@@ -101,7 +103,7 @@ class ProfessorsPage extends Component {
       await apiRequest(`/professors/${professor.professorId}`, { method: 'DELETE' });
       this.setState({
         editingProfessorId: null,
-        professorForm: { professorName: '', department: '' },
+        professorForm: { professorName: '', email: '', department: '' },
         notice: 'Professor record deleted.',
       });
       this.loadProfessors();
@@ -117,7 +119,7 @@ class ProfessorsPage extends Component {
     }
 
     return this.state.professors.filter((professor) =>
-      [professor.professorName, professor.department].join(' ').toLowerCase().includes(query)
+      [professor.professorName, professor.email, professor.department].join(' ').toLowerCase().includes(query)
     );
   }
 
@@ -142,7 +144,7 @@ class ProfessorsPage extends Component {
               type="search"
               value={this.state.query}
               onChange={(event) => this.setState({ query: event.target.value })}
-              placeholder="Search by professor or department"
+              placeholder="Search by professor, email, or department"
             />
           </span>
         </label>

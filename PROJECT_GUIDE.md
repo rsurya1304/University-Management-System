@@ -9,7 +9,7 @@ This project has two applications:
 | Frontend | `frontend` | React class components | `http://localhost:3000` |
 | Backend | `university` | Spring Boot REST API | `http://localhost:8080` |
 
-The backend handles login, JWT authentication, role-based authorization, seeded demo data, and CRUD APIs for students, professors, courses, fees, marks, timetable, reports, and academic records.
+The backend handles login, JWT authentication, role-based authorization, seeded demo data, and CRUD APIs for students, professors, courses, fees, marks, timetable, reports, announcements, and academic records.
 
 ## Local Startup
 
@@ -43,9 +43,11 @@ https://university-management-system-topaz.vercel.app/login
 | --- | --- | --- |
 | Admin | `admin@university.com` | `admin123` |
 | Professor | `professor@university.com` | `professor123` |
+| Seeded Professor | `john.smith@university.edu` | `professor123` |
 | Student | `student@university.com` | `student123` |
+| Seeded Student | `alice.johnson@university.edu` | `student123` |
 
-Students can self-register from the public registration screen. Staff accounts are created by admins from the Access page.
+Every seeded student can log in with their own email and `student123`. Every seeded professor can log in with their own email and `professor123`. Students can self-register from the public registration screen. Staff accounts are created by admins from the Access page.
 
 ## Authentication Flow
 
@@ -61,7 +63,7 @@ Login form
 
 ## Database
 
-The project uses H2 only.
+The project uses H2 locally and MySQL in production.
 
 Runtime database:
 
@@ -75,7 +77,18 @@ Test database:
 spring.datasource.url=jdbc:h2:mem:university-test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 ```
 
-There are no MySQL or PostgreSQL dependencies, URLs, migrations, or schema scripts in the active project.
+Production database:
+
+```env
+SPRING_PROFILES_ACTIVE=prod
+DB_HOST=your-aiven-host
+DB_PORT=14566
+DB_NAME=defaultdb
+DB_USERNAME=avnadmin
+DB_PASSWORD=your-secret-password
+```
+
+Production secrets must be stored in Render environment variables, not in GitHub.
 
 ## Data Seeding
 
@@ -85,7 +98,7 @@ Demo users and university records are created in:
 university/src/main/java/com/example/university/config/DemoDataInitializer.java
 ```
 
-The seeded student account is connected to a matching student profile, fees, courses, and marks by email.
+Seeded student accounts are connected to matching student profiles, fees, courses, and marks by email. Seeded professor accounts are connected through professor email records.
 
 ## Roles
 
@@ -107,8 +120,10 @@ Can view own profile, fees, marks, courses, timetable, and allowed read-only dat
 | `JwtService.java` | JWT creation and verification |
 | `AuthInterceptor.java` | Role-based API authorization |
 | `MeController.java` | Student self-service APIs |
+| `AnnouncementController.java` | University notices CRUD |
 | `DemoDataInitializer.java` | Seeded demo data |
-| `application.properties` | H2, server, JWT, CORS configuration |
+| `application.properties` | Local H2, server, JWT, CORS configuration |
+| `application-prod.properties` | Production MySQL/Aiven configuration |
 
 ## Important Frontend Files
 
@@ -117,6 +132,7 @@ Can view own profile, fees, marks, courses, timetable, and allowed read-only dat
 | `AuthShell` | Login/register UI and demo credentials |
 | `AccessPage` | Role details and admin staff registration |
 | `DashboardLayout` | Navigation and signed-in shell |
+| `AnnouncementsPage` | Notices module for admin management and role read access |
 | `ProtectedRoute` | Frontend route authorization |
 | `ModulePage` | Reusable CRUD/read-only module |
 | `config/access.js` | Role permissions and demo accounts |
@@ -147,6 +163,8 @@ For a fresh deployment:
 - Set frontend `REACT_APP_API_URL` to the latest backend URL.
 - Set backend `FRONTEND_URL` or `app.cors.allowed-origins` to `https://university-management-system-topaz.vercel.app`.
 - Set backend `JWT_SECRET` to a strong secret.
+- Set backend `SPRING_PROFILES_ACTIVE=prod`.
+- Set backend `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, and `DB_PASSWORD` from Aiven.
 - Delete obsolete cloud deployments directly in the provider dashboard or with authenticated provider API tokens.
 
 Keep only this working production frontend link in project documentation.

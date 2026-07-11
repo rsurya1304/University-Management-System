@@ -1,6 +1,6 @@
 # University Management System
 
-Full-stack university operations application with a Spring Boot backend, H2 database, JWT authentication, bcrypt password hashing, and a React class-component frontend.
+Full-stack university operations application with a Spring Boot backend, local H2 database, production-ready MySQL profile, JWT authentication, bcrypt password hashing, and a React class-component frontend.
 
 ## Run Locally
 
@@ -52,9 +52,11 @@ These accounts are seeded automatically when the backend starts:
 | --- | --- | --- |
 | Admin | `admin@university.com` | `admin123` |
 | Professor | `professor@university.com` | `professor123` |
+| Seeded Professor | `john.smith@university.edu` | `professor123` |
 | Student | `student@university.com` | `student123` |
+| Seeded Student | `alice.johnson@university.edu` | `student123` |
 
-The login page displays these role-based demo credentials for local verification.
+Every seeded student can log in with their own email and `student123`. Every seeded professor can log in with their own email and `professor123`. Passwords are stored as BCrypt hashes.
 
 ## Architecture
 
@@ -62,18 +64,32 @@ The login page displays these role-based demo credentials for local verification
 | --- | --- |
 | Frontend | React, React Router v5, class components |
 | Backend | Spring Boot, Spring WebMVC, Spring Data JPA |
-| Database | H2 only |
+| Database | H2 locally, MySQL/Aiven with `prod` profile |
 | Authentication | Custom JWT service, bcrypt password hashes, role interceptor |
 
 The frontend calls the backend through `frontend/src/services/api.js`. For local development, `frontend/.env.development` points to `http://localhost:8080`.
 
 ## Database
 
-The backend uses only H2:
+Local development uses H2:
 
 ```properties
 spring.datasource.url=jdbc:h2:file:./data/university-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 ```
+
+Production uses MySQL when `SPRING_PROFILES_ACTIVE=prod` is set:
+
+```env
+DB_HOST=your-aiven-host
+DB_PORT=14566
+DB_NAME=defaultdb
+DB_USERNAME=avnadmin
+DB_PASSWORD=your-secret-password
+FRONTEND_URL=https://university-management-system-topaz.vercel.app
+JWT_SECRET=strong-production-secret
+```
+
+The production MySQL password must stay in Render environment variables only. Do not commit it.
 
 Tests use an isolated in-memory H2 database from `university/src/test/resources/application.properties`, so local tests do not lock or modify the runtime database file.
 
@@ -97,7 +113,9 @@ university/src/main/java/com/example/university/config/DemoDataInitializer.java
 | GET/POST/PUT/DELETE | `/fees` | Fee CRUD |
 | GET/POST/PUT/DELETE | `/marks` | Marks CRUD |
 | GET/POST/PUT/DELETE | `/timetables` | Timetable CRUD |
+| GET/POST/PUT/DELETE | `/announcements` | University notices |
 | GET | `/reports/summary` | Dashboard/report metrics |
+| GET | `/health` | Backend health/cold-start check |
 | GET | `/me/student` | Current student profile |
 | GET | `/me/fees` | Current student fees |
 | GET | `/me/marks` | Current student marks |
@@ -128,5 +146,7 @@ Configure deployment platforms with environment variables:
 | Backend | `FRONTEND_URL` or `app.cors.allowed-origins` | `https://university-management-system-topaz.vercel.app` |
 | Backend | `JWT_SECRET` | Strong secret value |
 | Backend | `JWT_EXPIRATION_MINUTES` | Token lifetime, for example `480` |
+| Backend | `SPRING_PROFILES_ACTIVE` | `prod` |
+| Backend | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | Aiven MySQL values |
 
 Remove obsolete deployment projects and URLs directly in the cloud provider dashboards or with provider API tokens. This repository keeps only the production frontend link above.

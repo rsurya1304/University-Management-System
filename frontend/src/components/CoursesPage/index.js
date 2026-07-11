@@ -13,6 +13,7 @@ class CoursesPage extends Component {
     notice: '',
     query: '',
     courses: [],
+    registeredCourseIds: [],
     professors: [],
     editingCourseId: null,
     courseForm: {
@@ -28,7 +29,11 @@ class CoursesPage extends Component {
 
   canManageCourses() {
     const { accessLevel } = this.props.session;
-    return accessLevel === 'ADMIN' || accessLevel === 'REGISTRAR';
+    return accessLevel === 'ADMIN';
+  }
+
+  canRegisterCourses() {
+    return this.props.session.accessLevel === 'STUDENT';
   }
 
   loadCourses = async () => {
@@ -37,13 +42,22 @@ class CoursesPage extends Component {
     try {
       const courses = await apiRequest('/courses');
       let professors = [];
+      let registeredCourseIds = [];
 
       if (this.canManageCourses()) {
         professors = await apiRequest('/professors').catch(() => []);
       }
 
+      if (this.canRegisterCourses()) {
+        const registeredCourses = await apiRequest('/me/courses').catch(() => []);
+        registeredCourseIds = Array.isArray(registeredCourses)
+          ? registeredCourses.map((course) => course.courseId)
+          : [];
+      }
+
       this.setState({
         courses: Array.isArray(courses) ? courses : [],
+        registeredCourseIds,
         professors: Array.isArray(professors) ? professors : [],
       });
     } catch (error) {
@@ -132,6 +146,32 @@ class CoursesPage extends Component {
     }
   };
 
+  isCourseRegistered = (course) => this.state.registeredCourseIds.includes(course.courseId);
+
+  registerCourse = async (course) => {
+    this.setState({ notice: '' });
+
+    try {
+      await apiRequest(`/me/courses/${course.courseId}`, { method: 'POST' });
+      this.setState({ notice: `Registered for ${course.courseName}.` });
+      this.loadCourses();
+    } catch (error) {
+      this.setState({ notice: error.message });
+    }
+  };
+
+  withdrawCourse = async (course) => {
+    this.setState({ notice: '' });
+
+    try {
+      await apiRequest(`/me/courses/${course.courseId}`, { method: 'DELETE' });
+      this.setState({ notice: `Withdrawn from ${course.courseName}.` });
+      this.loadCourses();
+    } catch (error) {
+      this.setState({ notice: error.message });
+    }
+  };
+
   filteredCourses() {
     const query = this.state.query.trim().toLowerCase();
     if (!query) {
@@ -154,7 +194,8 @@ class CoursesPage extends Component {
       return null;
     }
 
-    const isSuccess = notice.includes('created') || notice.includes('updated') || notice.includes('deleted');
+    const isSuccess = ['created', 'updated', 'deleted', 'Registered', 'Withdrawn']
+      .some((word) => notice.includes(word));
     return <div className={`status-message ${isSuccess ? 'success' : 'error'}`}>{notice}</div>;
   }
 
@@ -180,6 +221,7 @@ class CoursesPage extends Component {
   render() {
     const { apiError, courseForm, editingCourseId, loading, professors } = this.state;
     const canManage = this.canManageCourses();
+    const canRegister = this.canRegisterCourses();
 
     return (
       <section className="courses-page route-page">
@@ -191,7 +233,11 @@ class CoursesPage extends Component {
         ) : (
           <DirectoryPanel
             title="Course catalog"
-            detail="Create course offerings, credit values, and professor ownership."
+            detail={
+              canRegister
+                ? 'Browse available courses and manage your personal course registration.'
+                : 'Create course offerings, credit values, and professor ownership.'
+            }
             action={
               canManage && (
                 <CourseForm
@@ -207,9 +253,13 @@ class CoursesPage extends Component {
           >
             <CourseTable
               canManage={canManage}
+              canRegister={canRegister}
               courses={this.filteredCourses()}
+              isRegistered={this.isCourseRegistered}
               onDelete={this.deleteCourse}
               onEdit={this.startEditCourse}
+              onRegister={this.registerCourse}
+              onWithdraw={this.withdrawCourse}
             />
           </DirectoryPanel>
         )}

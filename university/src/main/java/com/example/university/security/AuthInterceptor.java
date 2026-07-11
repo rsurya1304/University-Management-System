@@ -56,6 +56,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
         return HttpMethod.OPTIONS.matches(request.getMethod())
                 || "/".equals(path)
+                || path.equals("/health")
                 || path.startsWith("/h2-console")
                 || path.equals("/auth/login")
                 || path.equals("/auth/register")
@@ -75,19 +76,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if ("REGISTRAR".equals(role)) {
-            boolean readOnly = HttpMethod.GET.matches(method);
-            return path.startsWith("/students")
-                    || path.startsWith("/courses")
-                    || path.startsWith("/departments")
-                    || path.startsWith("/semesters")
-                    || path.startsWith("/classes")
-                    || path.startsWith("/fees")
-                    || path.startsWith("/syllabi")
-                    || path.startsWith("/reports")
-                    || (readOnly && path.startsWith("/professors"));
-        }
-
         if ("PROFESSOR".equals(role)) {
             boolean readOnly = HttpMethod.GET.matches(method);
             boolean teachingWrite = path.startsWith("/marks")
@@ -99,6 +87,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                     || path.startsWith("/semesters")
                     || path.startsWith("/classes")
                     || path.startsWith("/syllabi")
+                    || path.startsWith("/announcements")
                     || path.startsWith("/reports");
 
             return teachingWrite || (readOnly && academicLookupRead);
@@ -111,7 +100,8 @@ public class AuthInterceptor implements HandlerInterceptor {
                     || path.startsWith("/marks")
                     || path.startsWith("/reports")
                     || path.startsWith("/timetables")
-                    || path.startsWith("/syllabi"));
+                    || path.startsWith("/syllabi")
+                    || path.startsWith("/announcements"));
         }
 
         return false;

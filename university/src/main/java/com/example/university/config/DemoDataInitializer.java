@@ -2,6 +2,7 @@ package com.example.university.config;
 
 import com.example.university.model.AcademicClass;
 import com.example.university.model.AccessLevel;
+import com.example.university.model.Announcement;
 import com.example.university.model.Course;
 import com.example.university.model.Department;
 import com.example.university.model.Fee;
@@ -14,6 +15,7 @@ import com.example.university.model.Syllabus;
 import com.example.university.model.TimetableEntry;
 import com.example.university.model.UserAccount;
 import com.example.university.repository.AcademicClassJpaRepository;
+import com.example.university.repository.AnnouncementJpaRepository;
 import com.example.university.repository.CourseJpaRepository;
 import com.example.university.repository.DepartmentJpaRepository;
 import com.example.university.repository.FeeJpaRepository;
@@ -40,6 +42,7 @@ import java.util.List;
 public class DemoDataInitializer implements ApplicationRunner {
 
     private final AcademicClassJpaRepository classRepository;
+    private final AnnouncementJpaRepository announcementRepository;
     private final CourseJpaRepository courseRepository;
     private final DepartmentJpaRepository departmentRepository;
     private final FeeJpaRepository feeRepository;
@@ -54,6 +57,7 @@ public class DemoDataInitializer implements ApplicationRunner {
 
     public DemoDataInitializer(
             AcademicClassJpaRepository classRepository,
+            AnnouncementJpaRepository announcementRepository,
             CourseJpaRepository courseRepository,
             DepartmentJpaRepository departmentRepository,
             FeeJpaRepository feeRepository,
@@ -65,6 +69,7 @@ public class DemoDataInitializer implements ApplicationRunner {
             TimetableEntryJpaRepository timetableRepository,
             UserAccountJpaRepository userRepository) {
         this.classRepository = classRepository;
+        this.announcementRepository = announcementRepository;
         this.courseRepository = courseRepository;
         this.departmentRepository = departmentRepository;
         this.feeRepository = feeRepository;
@@ -80,9 +85,9 @@ public class DemoDataInitializer implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
-        seedUsers();
         List<Professor> professors = seedProfessors();
         List<Student> students = seedStudents();
+        seedUsers(professors, students);
         List<Course> courses = seedCourses(professors, students);
         List<Department> departments = seedDepartments();
         List<Semester> semesters = seedSemesters(departments);
@@ -91,13 +96,25 @@ public class DemoDataInitializer implements ApplicationRunner {
         seedFees(students);
         seedMarks(students, courses, semesters);
         seedTimetable(courses, professors, classes);
+        seedAnnouncements();
     }
 
-    private void seedUsers() {
+    private void seedUsers(List<Professor> professors, List<Student> students) {
         createUserIfMissing("Admin User", "admin@university.com", "admin123", AccessLevel.ADMIN);
-        createUserIfMissing("Registrar User", "registrar@university.com", "registrar123", AccessLevel.REGISTRAR);
         createUserIfMissing("Professor User", "professor@university.com", "professor123", AccessLevel.PROFESSOR);
         createUserIfMissing("Student User", "student@university.com", "student123", AccessLevel.STUDENT);
+        professors.forEach(professor -> createUserIfMissing(
+                professor.getProfessorName(),
+                professor.getEmail(),
+                "professor123",
+                AccessLevel.PROFESSOR
+        ));
+        students.forEach(student -> createUserIfMissing(
+                student.getStudentName(),
+                student.getEmail(),
+                "student123",
+                AccessLevel.STUDENT
+        ));
     }
 
     private void createUserIfMissing(String fullName, String email, String password, AccessLevel accessLevel) {
@@ -115,28 +132,48 @@ public class DemoDataInitializer implements ApplicationRunner {
 
     private List<Professor> seedProfessors() {
         if (professorRepository.count() > 0) {
-            return professors();
+            return repairProfessorEmails(professors());
         }
 
         List<Professor> professors = Arrays.asList(
-                professor("John Smith", "Computer Science"),
-                professor("Mary Johnson", "Physics"),
-                professor("David Lee", "Mathematics"),
-                professor("Robert Brown", "Chemistry"),
-                professor("Linda Wilson", "Biology"),
-                professor("James Taylor", "Mechanical Engineering"),
-                professor("Sophia Anderson", "Electronics"),
-                professor("Michael Thomas", "Civil Engineering"),
-                professor("Emma Martinez", "Artificial Intelligence"),
-                professor("Daniel White", "Data Science"),
-                professor("Priya Nair", "Cybersecurity"),
-                professor("Arjun Mehta", "Information Technology"),
-                professor("Kavya Rao", "Business Analytics"),
-                professor("Nisha Iyer", "English and Communication"),
-                professor("Vikram Patel", "Robotics"),
-                professor("Farah Khan", "Environmental Science")
+                professor("John Smith", "Computer Science", "john.smith@university.edu"),
+                professor("Mary Johnson", "Physics", "mary.johnson@university.edu"),
+                professor("David Lee", "Mathematics", "david.lee@university.edu"),
+                professor("Robert Brown", "Chemistry", "robert.brown@university.edu"),
+                professor("Linda Wilson", "Biology", "linda.wilson@university.edu"),
+                professor("James Taylor", "Mechanical Engineering", "james.taylor@university.edu"),
+                professor("Sophia Anderson", "Electronics", "sophia.anderson@university.edu"),
+                professor("Michael Thomas", "Civil Engineering", "michael.thomas@university.edu"),
+                professor("Emma Martinez", "Artificial Intelligence", "emma.martinez@university.edu"),
+                professor("Daniel White", "Data Science", "daniel.white@university.edu"),
+                professor("Priya Nair", "Cybersecurity", "priya.nair@university.edu"),
+                professor("Arjun Mehta", "Information Technology", "arjun.mehta@university.edu"),
+                professor("Kavya Rao", "Business Analytics", "kavya.rao@university.edu"),
+                professor("Nisha Iyer", "English and Communication", "nisha.iyer@university.edu"),
+                professor("Vikram Patel", "Robotics", "vikram.patel@university.edu"),
+                professor("Farah Khan", "Environmental Science", "farah.khan@university.edu")
         );
         return professorRepository.saveAll(professors);
+    }
+
+    private List<Professor> repairProfessorEmails(List<Professor> professors) {
+        boolean changed = false;
+        for (Professor professor : professors) {
+            if (professor.getEmail() == null || professor.getEmail().trim().isEmpty()) {
+                professor.setEmail(buildProfessorEmail(professor));
+                changed = true;
+            }
+        }
+        return changed ? professorRepository.saveAll(professors) : professors;
+    }
+
+    private String buildProfessorEmail(Professor professor) {
+        return professor.getProfessorName()
+                .trim()
+                .toLowerCase()
+                .replaceAll("[^a-z0-9]+", ".")
+                .replaceAll("^\\.|\\.$", "")
+                + "@university.edu";
     }
 
     private List<Student> seedStudents() {
@@ -403,10 +440,52 @@ public class DemoDataInitializer implements ApplicationRunner {
         ));
     }
 
-    private Professor professor(String name, String department) {
+    private void seedAnnouncements() {
+        if (announcementRepository.count() > 0) {
+            return;
+        }
+
+        announcementRepository.saveAll(Arrays.asList(
+                announcement(
+                        "Semester registration opens",
+                        "Students must complete course registration before the published academic deadline.",
+                        AccessLevel.STUDENT,
+                        "HIGH",
+                        "2026-07-15",
+                        "2026-08-15"
+                ),
+                announcement(
+                        "Faculty marks submission window",
+                        "Professors can upload internal assessment marks for assigned courses this week.",
+                        AccessLevel.PROFESSOR,
+                        "HIGH",
+                        "2026-07-18",
+                        "2026-07-31"
+                ),
+                announcement(
+                        "Fee payment reminder",
+                        "Pending semester fee payments should be cleared before the due date to avoid overdue status.",
+                        AccessLevel.STUDENT,
+                        "NORMAL",
+                        "2026-07-20",
+                        "2026-08-05"
+                ),
+                announcement(
+                        "Academic operations review",
+                        "Admin teams will review class schedules, professor allocations, and course capacity.",
+                        AccessLevel.ADMIN,
+                        "NORMAL",
+                        "2026-07-22",
+                        "2026-07-29"
+                )
+        ));
+    }
+
+    private Professor professor(String name, String department, String email) {
         Professor professor = new Professor();
         professor.setProfessorName(name);
         professor.setDepartment(department);
+        professor.setEmail(email);
         return professor;
     }
 
@@ -499,6 +578,23 @@ public class DemoDataInitializer implements ApplicationRunner {
         entry.setProfessor(professor);
         entry.setAcademicClass(academicClass);
         return entry;
+    }
+
+    private Announcement announcement(
+            String title,
+            String message,
+            AccessLevel audience,
+            String priority,
+            String publishDate,
+            String expiresOn) {
+        Announcement announcement = new Announcement();
+        announcement.setTitle(title);
+        announcement.setMessage(message);
+        announcement.setAudience(audience);
+        announcement.setPriority(priority);
+        announcement.setPublishDate(LocalDate.parse(publishDate));
+        announcement.setExpiresOn(LocalDate.parse(expiresOn));
+        return announcement;
     }
 
     private List<Professor> professors() {

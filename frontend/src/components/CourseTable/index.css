@@ -3,3 +3,42 @@
 .course-table table {
   min-width: 860px;
 }
+.course-register-action,
+.course-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 8px;
+  font-weight: 850;
+}
+
+.course-register-action {
+  min-height: 36px;
+  padding: 8px 11px;
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.course-register-action.registered {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.course-status {
+  min-height: 30px;
+  padding: 6px 9px;
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.course-status.active {
+  background: rgba(36, 122, 81, 0.12);
+  color: var(--success);
+}
+
+.course-register-action svg,
+.course-status svg {
+  flex: 0 0 auto;
+}
