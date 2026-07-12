@@ -58,15 +58,12 @@ async function requestOnce(path, options = {}) {
 
   if (!response.ok) {
     const errorPayload = await response.json().catch(() => null);
-    if (response.status === 401) {
+    if (response.status === 401 && !options.skipAuthRedirect) {
       localStorage.removeItem(SESSION_KEY);
       window.dispatchEvent(new Event('university-session-expired'));
     }
-    const error = new Error(
-      errorPayload?.message ||
-        errorPayload?.error ||
-        `Request failed with status ${response.status}`
-    );
+    const error = new Error(getFriendlyErrorMessage(response, errorPayload, options));
+    error.status = response.status;
     error.transient = response.status >= 502 || response.status === 408 || response.status === 429;
     throw error;
   }
@@ -84,6 +81,36 @@ function delay(ms) {
   return new Promise((resolve) => {
     window.setTimeout(resolve, ms);
   });
+}
+
+function getFriendlyErrorMessage(response, errorPayload, options) {
+  if (options.friendlyErrorMessage) {
+    return options.friendlyErrorMessage;
+  }
+
+  if (response.status === 401) {
+    return 'Your email or password is incorrect. Please check the credentials and try again.';
+  }
+
+  if (response.status === 403) {
+    return 'Your account does not have permission to perform this action.';
+  }
+
+  if (response.status === 404) {
+    return 'The requested record was not found.';
+  }
+
+  if (response.status === 409) {
+    return errorPayload?.message || 'This record already exists.';
+  }
+
+  if (response.status >= 500) {
+    return 'The server had a problem while processing this request. Please try again.';
+  }
+
+  return errorPayload?.message ||
+    errorPayload?.error ||
+    `Request failed with status ${response.status}`;
 }
 
 function getStoredToken() {

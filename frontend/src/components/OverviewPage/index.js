@@ -87,12 +87,32 @@ class OverviewPage extends Component {
       });
     } catch (error) {
       this.setState({
-        apiError: `${error.message}. Start the Spring server on ${getApiBase()} and refresh.`,
+        apiError: this.getOverviewErrorMessage(error),
       });
     } finally {
       this.setState({ loading: false });
     }
   };
+
+  getOverviewErrorMessage(error) {
+    if (error.status === 401) {
+      return 'Your session has expired. Please sign in again.';
+    }
+
+    if (error.status === 403) {
+      return 'This account is signed in, but it is not allowed to load one of the requested dashboard sections.';
+    }
+
+    if (error.status === 404) {
+      return 'Your account exists, but the matching student profile or dashboard record was not found.';
+    }
+
+    if (error.transient) {
+      return `The backend is starting or temporarily unavailable at ${getApiBase()}. Please wait a moment and refresh.`;
+    }
+
+    return error.message || 'Unable to load overview data. Please refresh and try again.';
+  }
 
   render() {
     const profile = getProfile(this.props.session.accessLevel);

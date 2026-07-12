@@ -95,17 +95,38 @@ class AuthShell extends Component {
 
   submitLogin = async (event) => {
     event.preventDefault();
+    const email = this.state.loginForm.email.trim();
+    const password = this.state.loginForm.password;
+
+    if (!email || !password) {
+      this.setState({
+        notice: 'Enter both email and password before logging in.',
+        noticeType: 'error',
+      });
+      return;
+    }
+
     this.setState({ loading: true, notice: '' });
 
     try {
       const user = await apiRequest('/auth/login', {
         method: 'POST',
-        body: this.state.loginForm,
+        body: {
+          email,
+          password,
+        },
         retries: 1,
+        skipAuthRedirect: true,
+        friendlyErrorMessage:
+          'Login failed. The email or password is incorrect. Use a demo account or check the typed credentials.',
       });
       this.props.onAuthenticated(user);
     } catch (error) {
-      this.setState({ notice: error.message, noticeType: 'error' });
+      this.setState({
+        notice: error.message,
+        noticeType: 'error',
+        serverStatus: error.transient ? 'waking' : 'ready',
+      });
     } finally {
       this.setState({ loading: false });
     }
@@ -295,7 +316,7 @@ class AuthShell extends Component {
           </div>
 
           {notice && <div className={`status-message ${noticeType}`}>{notice}</div>}
-          {serverStatus === 'waking' && (
+          {serverStatus === 'waking' && !notice && (
             <div className="status-message">
               Backend may be waking up. First login can take a few seconds on free hosting.
             </div>
