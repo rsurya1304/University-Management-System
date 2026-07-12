@@ -27,6 +27,8 @@ class AnnouncementsPage extends Component {
         endpoint="/announcements"
         idField="announcementId"
         canManage={canManage}
+        suppressReadErrors
+        emptyMessage="No announcements are available for your account right now."
         getRecordLabel={(record) => record.title}
         columns={[
           { key: 'announcementId', label: 'ID' },

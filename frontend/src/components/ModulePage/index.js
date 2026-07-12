@@ -66,6 +66,11 @@ class ModulePage extends Component {
         loading: false,
       });
     } catch (error) {
+      if (this.props.suppressReadErrors && !this.props.canManage) {
+        this.setState({ records: [], notice: '', loading: false });
+        return;
+      }
+
       this.setState({ notice: error.message, loading: false });
     }
   };
@@ -286,7 +291,11 @@ class ModulePage extends Component {
                   ))}
                 </tbody>
               </table>
-              {!records.length && <div className="empty-state">No records found.</div>}
+              {!records.length && (
+                <div className="empty-state">
+                  {this.props.emptyMessage || 'No records found.'}
+                </div>
+              )}
             </div>
           )}
         </div>

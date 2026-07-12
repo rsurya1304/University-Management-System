@@ -28,22 +28,39 @@ class OverviewPage extends Component {
 
     try {
       if (this.props.session.accessLevel === 'STUDENT') {
-        const [studentProfile, courses, fees, marks] = await Promise.all([
+        const settled = await Promise.allSettled([
           apiRequest('/me/student'),
           apiRequest('/me/courses'),
           apiRequest('/me/fees'),
           apiRequest('/me/marks'),
         ]);
+        const [studentProfileResult, coursesResult, feesResult, marksResult] = settled;
+        const hardFailure = settled.find((result) =>
+          result.status === 'rejected' &&
+          (result.reason?.status === 401 || result.reason?.transient)
+        );
+
+        if (hardFailure) {
+          throw hardFailure.reason;
+        }
+
+        const studentProfile = fulfilledValue(studentProfileResult) || {
+          studentName: this.props.session.fullName,
+          email: this.props.session.email,
+        };
+        const courses = fulfilledArray(coursesResult);
+        const fees = fulfilledArray(feesResult);
+        const marks = fulfilledArray(marksResult);
 
         this.setState({
           counts: {
             students: 1,
             professors: 0,
-            courses: Array.isArray(courses) ? courses.length : 0,
+            courses: courses.length,
           },
-          courses: Array.isArray(courses) ? courses : [],
-          fees: Array.isArray(fees) ? fees : [],
-          marks: Array.isArray(marks) ? marks : [],
+          courses,
+          fees,
+          marks,
           studentProfile,
         });
         return;
@@ -137,6 +154,15 @@ class OverviewPage extends Component {
       </div>
     );
   }
+}
+
+function fulfilledValue(result) {
+  return result.status === 'fulfilled' ? result.value : null;
+}
+
+function fulfilledArray(result) {
+  const value = fulfilledValue(result);
+  return Array.isArray(value) ? value : [];
 }
 
 export default OverviewPage;
