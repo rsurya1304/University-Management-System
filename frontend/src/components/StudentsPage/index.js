@@ -37,7 +37,7 @@ class StudentsPage extends Component {
       this.setState({ students: Array.isArray(students) ? students : [] });
     } catch (error) {
       this.setState({
-        apiError: `${error.message}. Start the Spring server on ${getApiBase()} and refresh.`,
+        apiError: `${error.message}. The backend service at ${getApiBase()} may still be starting. Please wait a moment and refresh.`,
       });
     } finally {
       this.setState({ loading: false });

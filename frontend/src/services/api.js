@@ -93,7 +93,7 @@ function getFriendlyErrorMessage(response, errorPayload, options) {
   }
 
   if (response.status === 403) {
-    return 'Your account does not have permission to perform this action.';
+    return 'This section is not available for your account.';
   }
 
   if (response.status === 404) {
@@ -110,7 +110,7 @@ function getFriendlyErrorMessage(response, errorPayload, options) {
 
   return errorPayload?.message ||
     errorPayload?.error ||
-    `Request failed with status ${response.status}`;
+    'Unable to complete the request. Please check the details and try again.';
 }
 
 function getStoredToken() {

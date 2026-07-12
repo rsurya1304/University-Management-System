@@ -117,7 +117,7 @@ class OverviewPage extends Component {
     }
 
     if (error.status === 403) {
-      return 'This account is signed in, but it is not allowed to load one of the requested dashboard sections.';
+      return 'Some dashboard details are not available for this account right now.';
     }
 
     if (error.status === 404) {
